@@ -768,6 +768,14 @@ fn parse(
                         })
                         .collect::<StringArray>(),
                 ) as ArrayRef),
+                DataType::LargeUtf8 => Ok(Arc::new(
+                    rows.iter()
+                        .map(|row| {
+                            let s = row.get(i);
+                            (!null_regex.is_null(s)).then_some(s)
+                        })
+                        .collect::<LargeStringArray>(),
+                ) as ArrayRef),
                 DataType::Dictionary(key_type, value_type)
                     if value_type.as_ref() == &DataType::Utf8 =>
                 {
